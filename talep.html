@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Talep Oluştur - Kaya Web</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <header>
+    <div class="container navbar">
+      <div class="logo">
+        <a href="index.html" style="text-decoration:none;color:inherit;">Kaya Web</a>
+      </div>
+      <nav>
+        <a href="index.html">Ana Sayfa</a>
+        <a href="talep.html">Talep Oluştur</a>
+        <a href="#">Hizmetler</a>
+        <a href="#">Portföy</a>
+        <a href="#">İletişim</a>
+      </nav>
+    </div>
+  </header>
+  <div class="container" style="max-width:700px;">
+    <h1 class="section-title" style="margin-top:36px;">Talep Oluştur</h1>
+    <p style="text-align:center; color:#666; margin-bottom:32px;">Aşağıdaki paketlerden birini seçerek kolayca web tasarım talebinizi oluşturabilirsiniz.</p>
+    <form id="talepForm" class="contact-form" style="background:#fff; padding:30px; border-radius:18px; box-shadow:0 2px 16px rgba(0,0,0,0.06); gap:18px;">
+      <!-- Paketler -->
+      <div style="display:flex; gap:20px; flex-wrap:wrap; justify-content:center;">
+        <label style="flex:1 1 180px; background:#f8fafc; border-radius:12px; padding:18px 14px; border:2px solid #0074d900; transition: border .14s; cursor:pointer;">
+          <input type="radio" name="paket" value="Baslangic" required style="margin-right:10px; accent-color:#0074d9;">
+          <strong>Başlangıç Paketi</strong><br>
+          <span style="color:#38d9a9;font-weight:600;">₺5.000</span>
+          <ul style="font-size:0.98rem; color:#666; margin:10px 0 0 0; padding-left:18px;">
+            <li>Tek sayfa (landing page)</li>
+            <li>Temel SEO uyumu</li>
+            <li>Mobil uyumlu</li>
+            <li>1 hafta teslimat</li>
+          </ul>
+        </label>
+        <label style="flex:1 1 180px; background:#f8fafc; border-radius:12px; padding:18px 14px; border:2px solid #0074d900; transition: border .14s; cursor:pointer;">
+          <input type="radio" name="paket" value="Kurumsal" style="margin-right:10px; accent-color:#38d9a9;">
+          <strong>Kurumsal Paket</strong><br>
+          <span style="color:#38d9a9;font-weight:600;">₺12.000</span>
+          <ul style="font-size:0.98rem; color:#666; margin:10px 0 0 0; padding-left:18px;">
+            <li>5 sayfaya kadar</li>
+            <li>Gelişmiş SEO</li>
+            <li>Google Analytics</li>
+            <li>2 hafta teslimat</li>
+          </ul>
+        </label>
+        <label style="flex:1 1 180px; background:#f8fafc; border-radius:12px; padding:18px 14px; border:2px solid #0074d900; transition: border .14s; cursor:pointer;">
+          <input type="radio" name="paket" value="Pro" style="margin-right:10px; accent-color:#222;">
+          <strong>Pro Paket</strong><br>
+          <span style="color:#0074d9;font-weight:600;">₺25.000</span>
+          <ul style="font-size:0.98rem; color:#666; margin:10px 0 0 0; padding-left:18px;">
+            <li>Sınırsız sayfa</li>
+            <li>Premium tasarım & animasyon</li>
+            <li>Yönetim paneli</li>
+            <li>3 hafta teslimat</li>
+          </ul>
+        </label>
+      </div>
+      <!-- Form Alanları -->
+      <input type="text" name="isim" placeholder="Adınız Soyadınız" required>
+      <input type="email" name="email" placeholder="E-posta adresiniz" required>
+      <input type="text" name="telefon" placeholder="Telefon numaranız">
+      <textarea name="detay" rows="3" placeholder="Ek talepleriniz veya projeniz hakkında bilgi..." style="resize:vertical;"></textarea>
+      <button type="submit" style="margin-top:12px;">Talep Oluştur</button>
+    </form>
+    <div id="talepDurum"></div>
+    <div style="height:32px;"></div>
+  </div>
+
+  <!-- FIREBASE ENTEGRASYON KODU -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
+    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyARBLwSVnyBQONQfgsT-6I65-xoKwf9cIE",
+      authDomain: "kayawebapp-a08f8.firebaseapp.com",
+      projectId: "kayawebapp-a08f8",
+      storageBucket: "kayawebapp-a08f8.appspot.com",
+      messagingSenderId: "351225541540",
+      appId: "1:351225541540:web:a7adcfc45860a459b38731",
+      measurementId: "G-F8X88XWHB7"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    document.addEventListener('DOMContentLoaded', function() {
+      const form = document.getElementById('talepForm');
+      const durumDiv = document.getElementById('talepDurum');
+      if (form) {
+        form.addEventListener('submit', async function(e){
+          e.preventDefault();
+          const data = {
+            isim: form.isim.value,
+            email: form.email.value,
+            telefon: form.telefon.value,
+            detay: form.detay.value,
+            paket: form.paket.value,
+            durum: "Bekliyor",
+            tarih: new Date()
+          };
+          try {
+            await addDoc(collection(db, "talepler"), data);
+            durumDiv.innerHTML = "<span style='color:green'>Talebiniz başarıyla gönderildi!</span>";
+            form.reset();
+          } catch (err) {
+            durumDiv.innerHTML = "<span style='color:red'>Bir hata oluştu. Tekrar deneyin.</span>";
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>

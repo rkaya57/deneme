@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kaya Web Yönetim Paneli</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <style>
+    body {background: #f5f7fa;}
+    .admin-container {max-width: 1080px; margin: 44px auto;}
+    .panel-navbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #fff;
+      border-radius: 18px;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+      padding: 16px 32px;
+      margin-bottom: 26px;
+    }
+    .panel-logo {font-size: 1.6rem; color: #0074d9; font-weight: 700; letter-spacing: 1.5px;}
+    .panel-navbar .btn-logout {
+      background: #0074d9; color: #fff; border: none; padding: 9px 22px; border-radius: 11px; font-weight: 600;
+      font-size: 1rem; transition: background .15s; box-shadow: 0 2px 12px #0074d930;
+    }
+    .panel-navbar .btn-logout:hover {background: #0056a3;}
+    .dashboard-cards {
+      display: flex;
+      gap: 22px;
+      margin-bottom: 32px;
+      flex-wrap: wrap;
+      justify-content: flex-start;
+    }
+    .dashboard-card {
+      flex: 1 1 200px;
+      min-width: 210px;
+      background: linear-gradient(90deg, #0074d9 80%, #38d9a9 100%);
+      color: #fff;
+      border-radius: 16px;
+      box-shadow: 0 4px 24px #0074d932;
+      padding: 22px 28px;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      font-size: 1.1rem;
+      font-weight: 500;
+    }
+    .dashboard-card i {font-size: 2rem; opacity: .86;}
+    .dashboard-card .big-number {font-size: 2.2rem; font-weight: bold; margin-left: 12px;}
+    .admin-table-box {
+      background: #fff;
+      border-radius: 18px;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.09);
+      padding: 24px;
+    }
+    .panel-title {
+      font-size: 1.4rem;
+      color: #222;
+      margin-bottom: 15px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .panel-title i {color: #38d9a9;}
+    .admin-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 8px;
+    }
+    .admin-table th, .admin-table td {
+      padding: 15px 9px;
+      text-align: left;
+    }
+    .admin-table th {
+      background: #eaf6fb;
+      color: #0074d9;
+      font-weight: 700;
+      font-size: 1.02rem;
+    }
+    .admin-table tr:not(:last-child) {border-bottom: 1px solid #e5e7eb;}
+    .status-select {
+      padding: 7px 12px;
+      border-radius: 8px;
+      border: 1.5px solid #38d9a980;
+      background: #f4f9fd;
+      font-weight: 600;
+      color: #0074d9;
+    }
+    .btn-delete {
+      background: #ff5050;
+      color: #fff;
+      border: none;
+      padding: 7px 18px;
+      border-radius: 9px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: background .14s;
+    }
+    .btn-delete:hover {background: #b02323;}
+    .status-dot {
+      display: inline-block;
+      width: 10px; height: 10px;
+      border-radius: 50%; margin-right: 7px; vertical-align:middle;
+    }
+    .dot-bekliyor {background:#ffc107;}
+    .dot-calisiliyor {background:#0074d9;}
+    .dot-tamamlandi {background:#38d9a9;}
+    /* Login */
+    .login-panel {
+      max-width: 370px;
+      margin: 85px auto;
+      background: #fff;
+      border-radius: 18px;
+      box-shadow: 0 2px 18px #0074d930;
+      padding: 38px 32px;
+    }
+    .login-panel input {margin-bottom: 18px;}
+    .login-panel label {font-weight:600;color:#0074d9;}
+    @media (max-width: 900px) {
+      .admin-container {padding: 8px;}
+      .dashboard-cards {flex-direction:column; gap:14px;}
+      .dashboard-card {min-width: 0; padding: 18px;}
+      .admin-table-box {padding: 8px;}
+    }
+  </style>
+</head>
+<body>
+  <!-- Giriş Ekranı -->
+  <div id="loginScreen" class="login-panel">
+    <h2 style="text-align:center;color:#0074d9;font-weight:700;margin-bottom:18px;letter-spacing:1px;">Yönetici Girişi</h2>
+    <label for="adminPassword">Şifre</label>
+    <input id="adminPassword" type="password" placeholder="Yönetici Şifresi" style="width:100%;padding:13px 8px;border-radius:10px;border:1.5px solid #e0e0e0;font-size:1.11rem;">
+    <button onclick="loginPanel()" style="width:100%;background:#0074d9;color:#fff;border:none;padding:13px;border-radius:10px;font-size:1.08rem;font-weight:600;cursor:pointer;margin-top:10px;">Giriş Yap</button>
+    <div id="loginError" style="color:#ff5050;font-size:1rem;margin-top:10px;display:none;text-align:center;">Şifre hatalı!</div>
+  </div>
+
+  <!-- Panel ana ekranı -->
+  <div id="adminPanel" style="display:none;">
+    <div class="admin-container">
+      <!-- Navbar / Header -->
+      <div class="panel-navbar">
+        <div class="panel-logo"><i class="fas fa-chart-bar"></i> Kaya Web Panel</div>
+        <button class="btn-logout" onclick="logoutPanel()"><i class="fas fa-sign-out-alt"></i> Çıkış Yap</button>
+      </div>
+      <!-- Dashboard Kartlar -->
+      <div class="dashboard-cards">
+        <div class="dashboard-card">
+          <i class="fas fa-clipboard-list"></i>
+          <span>Tüm Talepler <span class="big-number" id="talepToplam"></span></span>
+        </div>
+        <div class="dashboard-card">
+          <i class="fas fa-hourglass-half"></i>
+          <span>Bekleyen <span class="big-number" id="talepBekliyor"></span></span>
+        </div>
+        <div class="dashboard-card">
+          <i class="fas fa-spinner"></i>
+          <span>Çalışılıyor <span class="big-number" id="talepCalisiyor"></span></span>
+        </div>
+        <div class="dashboard-card">
+          <i class="fas fa-check-circle"></i>
+          <span>Tamamlandı <span class="big-number" id="talepTamamlandi"></span></span>
+        </div>
+      </div>
+      <!-- Talep Tablosu -->
+      <div class="admin-table-box">
+        <div class="panel-title"><i class="fas fa-list"></i> Talep Listesi</div>
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>İsim</th>
+              <th>E-posta</th>
+              <th>Paket</th>
+              <th>Telefon</th>
+              <th>Ek Bilgi</th>
+              <th>Durum</th>
+              <th>Sil</th>
+            </tr>
+          </thead>
+          <tbody id="talepList">
+            <!-- Talepler burada listelenecek -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- FIREBASE YÖNETİCİ PANELİ ENTEGRASYON KODU -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
+    import { getFirestore, collection, onSnapshot, doc, updateDoc, deleteDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyARBLwSVnyBQONQfgsT-6I65-xoKwf9cIE",
+      authDomain: "kayawebapp-a08f8.firebaseapp.com",
+      projectId: "kayawebapp-a08f8",
+      storageBucket: "kayawebapp-a08f8.appspot.com",
+      messagingSenderId: "351225541540",
+      appId: "1:351225541540:web:a7adcfc45860a459b38731",
+      measurementId: "G-F8X88XWHB7"
+    };
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    let talepler = [];
+    function statusDot(durum) {
+      if(durum==="Bekliyor") return '<span class="status-dot dot-bekliyor"></span>';
+      if(durum==="Çalışılıyor") return '<span class="status-dot dot-calisiliyor"></span>';
+      if(durum==="Tamamlandı") return '<span class="status-dot dot-tamamlandi"></span>';
+      return '';
+    }
+
+    function tabloyuYenile() {
+      let tbody = document.getElementById("talepList");
+      tbody.innerHTML = "";
+      talepler.forEach((talep, i) => {
+        tbody.innerHTML += `
+          <tr>
+            <td>${i+1}</td>
+            <td>${talep.isim}</td>
+            <td>${talep.email}</td>
+            <td>${talep.paket}</td>
+            <td>${talep.telefon || ""}</td>
+            <td>${talep.detay || ""}</td>
+            <td>
+              ${statusDot(talep.durum)}
+              <select class="status-select" onchange="updateStatus('${talep.id}', this.value)">
+                <option${talep.durum==='Bekliyor'?' selected':''}>Bekliyor</option>
+                <option${talep.durum==='Çalışılıyor'?' selected':''}>Çalışılıyor</option>
+                <option${talep.durum==='Tamamlandı'?' selected':''}>Tamamlandı</option>
+              </select>
+            </td>
+            <td>
+              <button class="btn-delete" onclick="deleteTalep('${talep.id}')"><i class="fas fa-trash-alt"></i></button>
+            </td>
+          </tr>
+        `;
+      });
+      updateDashboard();
+    }
+
+    function updateDashboard() {
+      document.getElementById("talepToplam").innerText = talepler.length;
+      document.getElementById("talepBekliyor").innerText = talepler.filter(t=>t.durum==="Bekliyor").length;
+      document.getElementById("talepCalisiyor").innerText = talepler.filter(t=>t.durum==="Çalışılıyor").length;
+      document.getElementById("talepTamamlandi").innerText = talepler.filter(t=>t.durum==="Tamamlandı").length;
+    }
+
+    // Şifreyle giriş
+    window.loginPanel = function() {
+      var pass = document.getElementById("adminPassword").value;
+      if(pass === "1234") {
+        document.getElementById("loginScreen").style.display = "none";
+        document.getElementById("adminPanel").style.display = "block";
+        loadTalepler();
+      } else {
+        document.getElementById("loginError").style.display = "block";
+      }
+    }
+    window.logoutPanel = function() {
+      document.getElementById("adminPanel").style.display = "none";
+      document.getElementById("loginScreen").style.display = "block";
+      document.getElementById("adminPassword").value = "";
+      document.getElementById("loginError").style.display = "none";
+    }
+
+    // Talepleri Firestore'dan ÇEK (girişten sonra çağrılır)
+    window.loadTalepler = function() {
+      const q = query(collection(db, "talepler"), orderBy("tarih", "desc"));
+      onSnapshot(q, (querySnapshot) => {
+        talepler = [];
+        querySnapshot.forEach((docu) => {
+          let t = docu.data();
+          t.id = docu.id;
+          talepler.push(t);
+        });
+        tabloyuYenile();
+      });
+    }
+
+    // Durum güncelle
+    window.updateStatus = async function(id, yeniDurum) {
+      const ref = doc(db, "talepler", id);
+      await updateDoc(ref, { durum: yeniDurum });
+    }
+
+    // Talep sil
+    window.deleteTalep = async function(id) {
+      if(confirm("Bu talebi silmek istediğinize emin misiniz?")) {
+        const ref = doc(db, "talepler", id);
+        await deleteDoc(ref);
+      }
+    }
+  </script>
+</body>
+</html>
