@@ -1,4 +1,6 @@
-const loadModule = new Function('u', 'return im' + 'port(u)');
-globalThis.loadModule = loadModule;
-globalThis.THREE = await loadModule('three');
-await loadModule('/game-core.js');
+import * as THREE from 'three';
+
+globalThis.THREE = THREE;
+globalThis.loadModule = (url) => import(url);
+
+await import('/game-core.js');
