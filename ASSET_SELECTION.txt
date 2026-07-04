@@ -1,0 +1,30 @@
+Tahtin Golgesi asset secimi
+
+Ana kaynaklar:
+1. Quaternius - Medieval Village MegaKit: sehzade saraylari, kuleler, koy/saray cevresi.
+2. Quaternius - Ultimate Fantasy RTS: sancak bolgeleri, barracks, market, tower, temple, farm, kaynak alanlari.
+3. Quaternius - Ultimate Modular Men Pack: kral, sehzade, asker, muhafiz karakterleri.
+4. Quaternius - Animated Knight Pack: sehzade ordulari icin zırhli askerler.
+5. Quaternius - Fantasy Props MegaKit: taht odasi, masa, sandik, kitap, silah, mum, hazine ve ic mekan objeleri.
+6. Kenney - Flag Pack: UI ve sancak gorsel sistemi icin.
+7. Kenney - Modular Dungeon Kit / Mini Dungeon: zindan, gizli gecit, mahzen ve saray alt bolumleri icin.
+
+Harita planlama:
+- Merkez saray: Kral Alparslan, vezir ve ana divan.
+- Guney: Mavi Hanedan, oyuncu baslangici.
+- Bati: Selim Sancagi, kirmizi ordu ve daha askeri mimari.
+- Dogu: Orhan Ocagi, yesil ordu ve talim meydani.
+- Kuzey: Cem Divani, mor sancak, gizli gecit ve casus agi.
+
+Gercek asset klasorleri:
+public/assets/factions/player/palace.glb
+public/assets/factions/player/soldier.glb
+public/assets/factions/selim/palace.glb
+public/assets/factions/selim/soldier.glb
+public/assets/factions/orhan/palace.glb
+public/assets/factions/orhan/soldier.glb
+public/assets/factions/cem/palace.glb
+public/assets/factions/cem/soldier.glb
+
+Uygulama notu:
+Su an kod GLTFLoader ile bu dosyalari okumaya hazir. Dosya yoksa gecici model kullanir. Gercek GLB dosyalari bu klasorlere eklenince oyun otomatik olarak onlari kullanir.
