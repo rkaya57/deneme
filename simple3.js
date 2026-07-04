@@ -1,2 +1,2 @@
-const ctx = globalThis.gameCtx;
-console.log('logic loaded', ctx);
+const ui = document.getElementById('ui');
+ui.textContent = 'oyun yüklendi';
