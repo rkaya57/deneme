@@ -1,41 +1,21 @@
 const ctx = globalThis.gameCtx;
 const THREE = globalThis.THREE;
 const ui = document.getElementById('ui');
-ui.textContent = 'Tahtın Gölgesi - WASD ile hareket, mouse ile kamera';
-ui.style.position = 'fixed';
-ui.style.left = '16px';
-ui.style.top = '16px';
-ui.style.color = '#f8ead3';
-ui.style.fontFamily = 'system-ui, sans-serif';
-ui.style.background = 'rgba(10,8,13,.7)';
-ui.style.padding = '12px';
-ui.style.borderRadius = '12px';
-const keys = {};
-let angle = Math.PI;
-let mouse = false;
-addEventListener('keydown', e => keys[e.code] = true);
-addEventListener('keyup', e => keys[e.code] = false);
-addEventListener('mousedown', () => mouse = true);
-addEventListener('mouseup', () => mouse = false);
-addEventListener('mousemove', e => { if (mouse) angle -= e.movementX * 0.006; });
-addEventListener('resize', () => { ctx.camera.aspect = innerWidth / innerHeight; ctx.camera.updateProjectionMatrix(); ctx.renderer.setSize(innerWidth, innerHeight); });
-function loop(){
-  requestAnimationFrame(loop);
-  const v = new THREE.Vector3((keys.KeyD?1:0)-(keys.KeyA?1:0),0,(keys.KeyS?1:0)-(keys.KeyW?1:0));
-  if(v.lengthSq()){
-    v.normalize();
-    const f = new THREE.Vector3(Math.sin(angle),0,Math.cos(angle));
-    const r = new THREE.Vector3(f.z,0,-f.x);
-    const mv = r.multiplyScalar(v.x).add(f.multiplyScalar(v.z)).multiplyScalar(0.075);
-    ctx.player.position.add(mv);
-    ctx.player.position.x = Math.max(-18, Math.min(18, ctx.player.position.x));
-    ctx.player.position.z = Math.max(-27, Math.min(19, ctx.player.position.z));
-    ctx.player.rotation.y = Math.atan2(mv.x, mv.z);
-  }
-  const target = ctx.player.position.clone().add(new THREE.Vector3(0,1.6,0));
-  const off = new THREE.Vector3(Math.sin(angle)*8,5.2,Math.cos(angle)*8);
-  ctx.camera.position.lerp(target.clone().add(off),0.08);
-  ctx.camera.lookAt(target);
-  ctx.renderer.render(ctx.scene, ctx.camera);
-}
-loop();
+ui.style.position='fixed';ui.style.inset='0';ui.style.color='#f8ead3';ui.style.fontFamily='system-ui,sans-serif';ui.style.pointerEvents='none';
+function panelBox(x,y,w){const e=document.createElement('div');e.style.position='absolute';e.style.left=x;e.style.top=y;e.style.width=w;e.style.padding='12px';e.style.borderRadius='14px';e.style.background='rgba(10,8,13,.78)';e.style.pointerEvents='auto';ui.appendChild(e);return e;}
+const hud=panelBox('16px','16px','min(760px,calc(100vw - 32px))');
+const card=panelBox('50%','auto','min(860px,94vw)');card.style.bottom='20px';card.style.transform='translateX(-50%)';
+const tip=panelBox('50%','auto','auto');tip.style.bottom='170px';tip.style.transform='translateX(-50%)';tip.style.display='none';
+const state={day:1,inf:24,mil:18,pub:22,gold:35,trust:12,sus:4};
+function clamp(v){return Math.max(0,Math.min(100,v));}
+function score(){return state.inf+state.mil+state.pub+state.trust-Math.floor(state.sus*1.4);}
+function hudUpdate(){hud.textContent='Tahtın Gölgesi | Gün '+state.day+' | Nüfuz '+state.inf+' | Asker '+state.mil+' | Halk '+state.pub+' | Altın '+state.gold+' | Kral '+state.trust+' | Şüphe '+state.sus+' | Puan '+score()+'/145';}
+function apply(e){for(const k in e)state[k]=clamp((state[k]||0)+e[k]);state.day++;hudUpdate();}
+function makeBtn(t,fn){const b=document.createElement('button');b.textContent=t;b.style.margin='5px';b.style.padding='9px 11px';b.style.border='0';b.style.borderRadius='10px';b.style.background='#d8953f';b.style.fontWeight='900';b.onclick=fn;return b;}
+function intro(){card.textContent='WASD hareket, mouse kamera, E konuş. Kral, vezir, komutan, halk elçisi ve şehzadelerle konuşup taht puanını 145 üzerine çıkar.';}
+function final(){let title='Eksik Destek',txt='Taht için henüz yeterli denge kurulamadı.';if(state.sus>70){title='Gölgen Ağır Bastı';txt='Saray seni güçlü ama riskli gördü.';}else if(state.trust>=55&&state.pub>=55){title='Adaletle Gelen Taht';txt='Kral ve halk seni varis kabul etti.';}else if(state.mil>=65&&state.inf>=45){title='Sancakların Seçtiği Şehzade';txt='Komutanlar ve saray ileri gelenleri yanında durdu.';}else if(state.inf>=70){title='Sarayın Sessiz Galibi';txt='Mühürler ve ittifaklar seni öne taşıdı.';}card.textContent='';const h=document.createElement('h1');h.textContent=title;const p=document.createElement('p');p.textContent=txt;card.append(h,p,makeBtn('Baştan Oyna',()=>location.reload()));}
+function openNpc(n){card.textContent='';const d=n.userData;const h=document.createElement('h2');h.textContent=d.name+' - '+d.role;const p=document.createElement('p');card.append(h,p);let opts=[];if(d.id==='king'&&score()>=145){p.textContent='Divan hazır. Taht iddianı açıklayabilirsin.';opts=[['Final Divanı Topla',{trust:8,inf:6},final],['Hazırlanmayı sürdür',{trust:2}]];}else if(d.id==='king'){p.textContent='Kral devlet aklı bekliyor.';opts=[['Askerî düzen öner',{mil:10,trust:6,gold:-6}],['Halkı koru',{pub:10,trust:4,gold:-8}],['Saray dengesini koru',{inf:8,trust:5}]];}else if(d.id==='vezir'){p.textContent='Vezir mühürlerin gücünü anlatır.';opts=[['Bürokraside güçlen',{inf:14,gold:-10,sus:4}],['Sabırlı ilerle',{inf:6,sus:-3}]];}else if(d.id==='komutan'){p.textContent='Komutan kararlı şehzadeyi sever.';opts=[['Talim yap',{mil:15,gold:-7}],['Devleti öncele',{trust:5,pub:4}]];}else if(d.id==='halk'){p.textContent='Halk elçisi adalet ister.';opts=[['Erzak desteği ver',{pub:16,gold:-12}],['Meclis sözü ver',{pub:9,inf:3}]];}else if(d.id==='katip'){p.textContent='Katip sarayın fısıltılarını bilir.';opts=[['Bilgi topla',{inf:10,sus:8}],['Sessiz kal',{sus:-6}]];}else{p.textContent='Rakip şehzade seni tartıyor.';opts=[['İttifak kur',{inf:6,mil:5,trust:-2}],['Rekabet göster',{inf:8,sus:4}],['Mesafeli kal',{sus:-2,trust:2}]];}opts.forEach(o=>card.appendChild(makeBtn(o[0],()=>{apply(o[1]);o[2]?o[2]():openNpc(n);})));}
+const keys={};let angle=Math.PI,mouse=false,near=null;
+addEventListener('keydown',e=>{keys[e.code]=true;if(e.code==='KeyE'&&near)openNpc(near);});addEventListener('keyup',e=>keys[e.code]=false);addEventListener('mousedown',()=>mouse=true);addEventListener('mouseup',()=>mouse=false);addEventListener('mousemove',e=>{if(mouse)angle-=e.movementX*.006;});addEventListener('resize',()=>{ctx.camera.aspect=innerWidth/innerHeight;ctx.camera.updateProjectionMatrix();ctx.renderer.setSize(innerWidth,innerHeight);});
+function loop(t=0){requestAnimationFrame(loop);const v=new THREE.Vector3((keys.KeyD?1:0)-(keys.KeyA?1:0),0,(keys.KeyS?1:0)-(keys.KeyW?1:0));if(v.lengthSq()){v.normalize();const f=new THREE.Vector3(Math.sin(angle),0,Math.cos(angle));const r=new THREE.Vector3(f.z,0,-f.x);const mv=r.multiplyScalar(v.x).add(f.multiplyScalar(v.z)).multiplyScalar(keys.Shift?.pressed?0.12:0.075);ctx.player.position.add(mv);ctx.player.position.x=Math.max(-18,Math.min(18,ctx.player.position.x));ctx.player.position.z=Math.max(-27,Math.min(19,ctx.player.position.z));ctx.player.rotation.y=Math.atan2(mv.x,mv.z);}let best=null,dist=999;for(const n of ctx.npcs){n.rotation.y=Math.sin(t*.001+n.position.x)*.08;const d=n.position.distanceTo(ctx.player.position);if(d<dist){dist=d;best=n;}}near=dist<3.2?best:null;if(near){tip.style.display='block';tip.textContent='E - '+near.userData.name+' ile konuş';}else tip.style.display='none';const target=ctx.player.position.clone().add(new THREE.Vector3(0,1.6,0));const off=new THREE.Vector3(Math.sin(angle)*8,5.2,Math.cos(angle)*8);ctx.camera.position.lerp(target.clone().add(off),.08);ctx.camera.lookAt(target);ctx.renderer.render(ctx.scene,ctx.camera);}
+ctx.camera.position.set(0,7,18);ctx.camera.lookAt(0,1.5,0);hudUpdate();intro();loop();
