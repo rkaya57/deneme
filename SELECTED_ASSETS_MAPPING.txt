@@ -1,0 +1,29 @@
+Tahtin Golgesi - Secilen ve Donusturulen Assetler
+
+ZIP dosyalarindan secilen modeller GLB formatina donusturuldu.
+
+Faction dosya eslesmeleri:
+
+player/palace.glb  <- Ultimate Fantasy RTS / TownCenter_SecondAge_Level3.gltf
+player/soldier.glb <- Ultimate Modular Men / Adventurer.gltf
+
+selim/palace.glb   <- Ultimate Fantasy RTS / Barracks_SecondAge_Level3.gltf
+selim/soldier.glb  <- Ultimate Modular Men / Worker.gltf
+
+orhan/palace.glb   <- Ultimate Fantasy RTS / Temple_SecondAge_Level3.gltf
+orhan/soldier.glb  <- Ultimate Modular Men / Farmer.gltf
+
+cem/palace.glb     <- Ultimate Fantasy RTS / Wonder_SecondAge_Level3.gltf
+cem/soldier.glb    <- Ultimate Modular Men / King.gltf
+
+Oyunun bekledigi hedef klasorler:
+public/assets/factions/player/palace.glb
+public/assets/factions/player/soldier.glb
+public/assets/factions/selim/palace.glb
+public/assets/factions/selim/soldier.glb
+public/assets/factions/orhan/palace.glb
+public/assets/factions/orhan/soldier.glb
+public/assets/factions/cem/palace.glb
+public/assets/factions/cem/soldier.glb
+
+Not: GLB dosyalari binary oldugu icin bu sohbet/GitHub connector uzerinden dogrudan yazilamadi. Dosyalar dogru klasor yapisiyla hazirlandi; zip repo kokune acildiginda oyun gercek assetleri okuyacak.
