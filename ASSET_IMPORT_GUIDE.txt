@@ -1,0 +1,52 @@
+Tahtin Golgesi - Gercek Asset Import Rehberi
+
+Secilen paketler:
+1. Quaternius Medieval Village MegaKit
+URL: https://quaternius.com/packs/medievalvillagemegakit.html
+Kullanim: oyuncu sarayi, Selim sarayi, Orhan sarayi, Cem sarayi, kule, duvar, kapi, merdiven, sokak parcalari.
+
+2. Quaternius Ultimate Fantasy RTS
+URL: https://quaternius.com/packs/ultimatefantasyrts.html
+Kullanim: barracks, market, tower, temple, farm, plaza, kaynak alani, sancak bolgesi mimarisi.
+
+3. Quaternius Ultimate Modular Men Pack
+URL: https://quaternius.com/
+Kullanim: kral, sehzade, muhafiz, vezir, elci, katip karakterleri.
+
+4. Quaternius Animated Knight Pack
+URL: https://quaternius.com/
+Kullanim: her sehzadenin ordusu icin farkli asker modelleri.
+
+5. Quaternius Fantasy Props MegaKit
+URL: https://quaternius.com/
+Kullanim: taht odasi, masa, kitap, sandik, mum, hazine, silah ve dekor objeleri.
+
+Oyunun su an okudugu dosya yollari:
+public/assets/factions/player/palace.glb
+public/assets/factions/player/soldier.glb
+public/assets/factions/selim/palace.glb
+public/assets/factions/selim/soldier.glb
+public/assets/factions/orhan/palace.glb
+public/assets/factions/orhan/soldier.glb
+public/assets/factions/cem/palace.glb
+public/assets/factions/cem/soldier.glb
+
+Yapilacak is:
+1. Quaternius paketlerini indir.
+2. ZIP dosyalarini ac.
+3. glTF veya GLB formatli modelleri bul.
+4. Secilen palace modelini ilgili faction klasorune palace.glb olarak koy.
+5. Secilen soldier modelini ilgili faction klasorune soldier.glb olarak koy.
+6. npm run dev ile oyunu ac.
+7. Dosya mevcutsa oyun gercek asseti kullanir. Dosya yoksa fallback model gorunur.
+
+Not:
+GitHub connector text dosyalari yazabiliyor; fakat buyuk .zip veya .glb binary assetleri dogrudan yukleyemiyor. Bu yuzden kod ve klasor yollari hazirlandi. Asset dosyalari yerel bilgisayardan repoya eklenince sistem calisir.
+
+Git komutlari:
+git pull
+mkdir -p public/assets/factions/player public/assets/factions/selim public/assets/factions/orhan public/assets/factions/cem
+# GLB dosyalarini ilgili klasorlere kopyala
+git add public/assets
+git commit -m "add real game assets"
+git push
