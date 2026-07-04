@@ -1,3 +1,2 @@
-const load = new Function('p', 'return im' + 'port(p)');
-const lib = await load('three');
-console.log(lib);
+const ctx = globalThis.gameCtx;
+console.log('logic loaded', ctx);
