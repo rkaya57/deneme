@@ -1,0 +1,9 @@
+Tahtin Golgesi oyun plani
+
+Harita tek saray olmayacak. Merkezde kralin sarayi bulunacak. Oyuncu guneyde Mavi Hanedan sarayinda baslayacak. Selim bati sancaginda, Orhan dogu sancaginda, Cem kuzey sancaginda olacak. Her sancagin kendi sarayi, ordusu ve bayragi olacak.
+
+Hikaye: Kral yaslanmistir. Sehzadeler kendi sancaklarinda guc toplar. Oyuncu vezir, komutan, halk elcisi ve rakip sehzadelerle konusarak nufuz, asker, halk destegi, altin, kral guveni ve suphe degerlerini yonetir. Puan 145 uzerine cikinca merkez sarayda final divani baslar.
+
+Finaller: Adaletle Gelen Taht, Sancaklarin Sectigi Sehzade, Sarayin Sessiz Galibi, Golgen Agir Basti, Eksik Destek.
+
+Gercek asset plani: public/assets/factions/player/palace.glb ve soldier.glb, selim/palace.glb ve soldier.glb, orhan/palace.glb ve soldier.glb, cem/palace.glb ve soldier.glb. Poly Pizza veya benzeri kaynaklardan secilen assetlerin lisansi kontrol edilerek bu klasorlere eklenecek.
