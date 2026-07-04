@@ -1,44 +1,129 @@
-const ctx=globalThis.gameCtx;
-const THREE=globalThis.THREE;
-function mm(g,ma,p=[0,0,0]){const o=new THREE.Mesh(g,ma);o.position.set(...p);o.castShadow=true;o.receiveShadow=true;return o;}
-const fm={stone:new THREE.MeshStandardMaterial({color:0x6f5c48,roughness:.8}),gold:new THREE.MeshStandardMaterial({color:0xd7a23a,metalness:.35,roughness:.34}),wood:new THREE.MeshStandardMaterial({color:0x5a3824,roughness:.75}),skin:new THREE.MeshStandardMaterial({color:0xb9825c,roughness:.7}),earth:new THREE.MeshStandardMaterial({color:0x1b2119,roughness:.9}),road:new THREE.MeshStandardMaterial({color:0x5b4a38,roughness:.88})};
-ctx.scene.add(mm(new THREE.BoxGeometry(112,.22,140),fm.earth,[0,-.45,-8]));
-ctx.scene.add(mm(new THREE.BoxGeometry(6,.08,118),fm.road,[0,-.28,-8]));
-ctx.scene.add(mm(new THREE.BoxGeometry(86,.08,5),fm.road,[0,-.27,-10]));
-ctx.scene.add(mm(new THREE.BoxGeometry(30,.08,5),fm.road,[0,-.26,34]));
-ctx.scene.add(mm(new THREE.BoxGeometry(30,.08,5),fm.road,[0,-.26,-54]));
-function flagTex(bg,name,symbol){const c=document.createElement('canvas');c.width=256;c.height=384;const x=c.getContext('2d');x.fillStyle=bg;x.fillRect(0,0,256,384);x.fillStyle='#f6d47b';x.font='bold 72px serif';x.textAlign='center';x.fillText(symbol,128,155);x.font='bold 24px sans-serif';x.fillText(name,128,260);return new THREE.CanvasTexture(c);}
-function soldier(color){const m=new THREE.MeshStandardMaterial({color,roughness:.7});const g=new THREE.Group();g.add(mm(new THREE.CapsuleGeometry(.32,.9,6,12),m,[0,.9,0]));g.add(mm(new THREE.SphereGeometry(.25,16,12),fm.skin,[0,1.65,0]));g.add(mm(new THREE.CylinderGeometry(.28,.28,.18,16),fm.gold,[0,1.95,0]));g.add(mm(new THREE.BoxGeometry(.08,.9,.08),fm.gold,[.42,.9,.15]));return g;}
-function palace(color){const m=new THREE.MeshStandardMaterial({color,roughness:.72});const g=new THREE.Group();g.add(mm(new THREE.BoxGeometry(7,3,5),m,[0,1.5,0]));g.add(mm(new THREE.ConeGeometry(4.8,2.4,4),fm.gold,[0,4.1,0]));for(const x of[-3,3])for(const z of[-2,2])g.add(mm(new THREE.CylinderGeometry(.35,.55,3.8,16),fm.stone,[x,1.9,z]));return g;}
-function banner(f){const g=new THREE.Group();g.add(mm(new THREE.CylinderGeometry(.08,.1,5.4,12),fm.wood,[0,2.7,0]));g.add(mm(new THREE.PlaneGeometry(2.3,3.3),new THREE.MeshStandardMaterial({map:flagTex(f.css,f.name,f.symbol),side:THREE.DoubleSide,roughness:.75}),[1.18,3.45,0]));return g;}
-function army(color){const g=new THREE.Group();for(let r=0;r<3;r++)for(let i=0;i<6;i++){const s=soldier(color);s.position.set((i-2.5)*1.05,0,r*1.15);g.add(s);}return g;}
-function loadReal(url,target,scale=1){if(!globalThis.GLTFLoader)return;new globalThis.GLTFLoader().load(url,gltf=>{target.clear();const o=gltf.scene;o.scale.setScalar(scale);o.traverse(n=>{if(n.isMesh){n.castShadow=true;n.receiveShadow=true;}});target.add(o);},undefined,()=>{});}
-function faction(f){const base=new THREE.Group();base.position.set(...f.pos);const p=palace(f.color);base.add(p);const a=army(f.color);a.position.set(-4,0,-6.5);base.add(a);const b=banner(f);b.position.set(4.5,0,3);base.add(b);ctx.scene.add(base);loadReal('/assets/factions/'+f.id+'/palace.glb',p,2);loadReal('/assets/factions/'+f.id+'/soldier.glb',a,1);}
-[
-{id:'player',name:'Mavi Hanedan',symbol:'☾',css:'#1e4776',color:0x1e4776,pos:[0,0,42]},
-{id:'selim',name:'Selim Sancağı',symbol:'S',css:'#7d1f21',color:0x7d1f21,pos:[-38,0,-10]},
-{id:'orhan',name:'Orhan Ocağı',symbol:'O',css:'#23543a',color:0x23543a,pos:[38,0,-10]},
-{id:'cem',name:'Cem Divanı',symbol:'C',css:'#59316d',color:0x59316d,pos:[0,0,-62]}
-].forEach(faction);
-const npcHome={king:[0,1.05,-23.2],vezir:[-7,0,-24],komutan:[8,0,-24],halk:[0,0,34],katip:[7,0,34],selim:[-38,0,-3],orhan:[38,0,-3],cem:[0,0,-55]};
-for(const n of ctx.npcs){const p=npcHome[n.userData.id];if(p)n.position.set(...p);}
-ctx.player.position.set(0,0,46);
-const ui=document.getElementById('ui');
-ui.style.position='fixed';ui.style.inset='0';ui.style.color='#f8ead3';ui.style.fontFamily='system-ui,sans-serif';ui.style.pointerEvents='none';
-function panelBox(x,y,w){const e=document.createElement('div');e.style.position='absolute';e.style.left=x;e.style.top=y;e.style.width=w;e.style.padding='12px';e.style.borderRadius='14px';e.style.background='rgba(10,8,13,.78)';e.style.pointerEvents='auto';ui.appendChild(e);return e;}
-const hud=panelBox('16px','16px','min(760px,calc(100vw - 32px))');
-const card=panelBox('50%','auto','min(860px,94vw)');card.style.bottom='20px';card.style.transform='translateX(-50%)';
-const tip=panelBox('50%','auto','auto');tip.style.bottom='170px';tip.style.transform='translateX(-50%)';tip.style.display='none';
-const state={day:1,inf:24,mil:18,pub:22,gold:35,trust:12,sus:4};
-function clamp(v){return Math.max(0,Math.min(100,v));}
-function score(){return state.inf+state.mil+state.pub+state.trust-Math.floor(state.sus*1.4);}
-function hudUpdate(){hud.textContent='Tahtın Gölgesi | Gün '+state.day+' | Nüfuz '+state.inf+' | Asker '+state.mil+' | Halk '+state.pub+' | Altın '+state.gold+' | Kral '+state.trust+' | Şüphe '+state.sus+' | Puan '+score()+'/145';}
-function apply(e){for(const k in e)state[k]=clamp((state[k]||0)+e[k]);state.day++;hudUpdate();}
-function makeBtn(t,fn){const b=document.createElement('button');b.textContent=t;b.style.margin='5px';b.style.padding='9px 11px';b.style.border='0';b.style.borderRadius='10px';b.style.background='#d8953f';b.style.fontWeight='900';b.onclick=fn;return b;}
-function intro(){card.textContent='Artık herkes aynı sarayda değil. Sen Mavi Hanedan sarayında başlıyorsun. Selim batıda, Orhan doğuda, Cem kuzeyde kendi sancağı ve ordusuyla bekliyor. Kral merkez sarayda.';}
-function final(){let title='Eksik Destek',txt='Taht için henüz yeterli denge kurulamadı.';if(state.sus>70){title='Gölgen Ağır Bastı';txt='Saray seni güçlü ama riskli gördü.';}else if(state.trust>=55&&state.pub>=55){title='Adaletle Gelen Taht';txt='Kral ve halk seni varis kabul etti.';}else if(state.mil>=65&&state.inf>=45){title='Sancakların Seçtiği Şehzade';txt='Komutanlar ve saray ileri gelenleri yanında durdu.';}else if(state.inf>=70){title='Sarayın Sessiz Galibi';txt='Mühürler ve ittifaklar seni öne taşıdı.';}card.textContent='';const h=document.createElement('h1');h.textContent=title;const p=document.createElement('p');p.textContent=txt;card.append(h,p,makeBtn('Baştan Oyna',()=>location.reload()));}
-function openNpc(n){card.textContent='';const d=n.userData;const h=document.createElement('h2');h.textContent=d.name+' - '+d.role;const p=document.createElement('p');card.append(h,p);let opts=[];if(d.id==='king'&&score()>=145){p.textContent='Divan hazır. Taht iddianı açıklayabilirsin.';opts=[['Final Divanı Topla',{trust:8,inf:6},final],['Hazırlanmayı sürdür',{trust:2}]];}else if(d.id==='king'){p.textContent='Kral merkez sarayda devlet aklı bekliyor.';opts=[['Askerî düzen öner',{mil:10,trust:6,gold:-6}],['Halkı koru',{pub:10,trust:4,gold:-8}],['Saray dengesini koru',{inf:8,trust:5}]];}else{p.textContent='Bu karakter kendi sancağının desteğini ve saray dengesini etkiler.';opts=[['Destek iste',{inf:8,mil:5,pub:4}],['Temkinli davran',{trust:3,sus:-2}],['Gizli hamle yap',{inf:10,sus:7}]];}opts.forEach(o=>card.appendChild(makeBtn(o[0],()=>{apply(o[1]);o[2]?o[2]():openNpc(n);})));}
-const keys={};let angle=Math.PI,mouse=false,near=null;
-addEventListener('keydown',e=>{keys[e.code]=true;if(e.code==='KeyE'&&near)openNpc(near);});addEventListener('keyup',e=>keys[e.code]=false);addEventListener('mousedown',()=>mouse=true);addEventListener('mouseup',()=>mouse=false);addEventListener('mousemove',e=>{if(mouse)angle-=e.movementX*.006;});addEventListener('resize',()=>{ctx.camera.aspect=innerWidth/innerHeight;ctx.camera.updateProjectionMatrix();ctx.renderer.setSize(innerWidth,innerHeight);});
-function loop(t=0){requestAnimationFrame(loop);const v=new THREE.Vector3((keys.KeyD?1:0)-(keys.KeyA?1:0),0,(keys.KeyS?1:0)-(keys.KeyW?1:0));if(v.lengthSq()){v.normalize();const f=new THREE.Vector3(Math.sin(angle),0,Math.cos(angle));const r=new THREE.Vector3(f.z,0,-f.x);const mv=r.multiplyScalar(v.x).add(f.multiplyScalar(v.z)).multiplyScalar(keys.ShiftLeft?0.12:0.075);ctx.player.position.add(mv);ctx.player.position.x=Math.max(-54,Math.min(54,ctx.player.position.x));ctx.player.position.z=Math.max(-76,Math.min(56,ctx.player.position.z));ctx.player.rotation.y=Math.atan2(mv.x,mv.z);}let best=null,dist=999;for(const n of ctx.npcs){n.rotation.y=Math.sin(t*.001+n.position.x)*.08;const d=n.position.distanceTo(ctx.player.position);if(d<dist){dist=d;best=n;}}near=dist<3.2?best:null;if(near){tip.style.display='block';tip.textContent='E - '+near.userData.name+' ile konuş';}else tip.style.display='none';const target=ctx.player.position.clone().add(new THREE.Vector3(0,1.6,0));const off=new THREE.Vector3(Math.sin(angle)*9,6.2,Math.cos(angle)*9);ctx.camera.position.lerp(target.clone().add(off),.08);ctx.camera.lookAt(target);ctx.renderer.render(ctx.scene,ctx.camera);}
-ctx.camera.position.set(0,8,54);ctx.camera.lookAt(ctx.player.position);hudUpdate();intro();loop();
+const ctx = globalThis.gameCtx;
+const THREE = globalThis.THREE;
+const ui = document.getElementById('ui');
+ui.style.position = 'fixed';
+ui.style.inset = '0';
+ui.style.color = '#f8ead3';
+ui.style.fontFamily = 'system-ui, Segoe UI, sans-serif';
+ui.style.pointerEvents = 'none';
+function panelBox(x, y, w) {
+  const e = document.createElement('div');
+  e.style.position = 'absolute'; e.style.left = x; e.style.top = y; e.style.width = w;
+  e.style.padding = '12px'; e.style.borderRadius = '14px';
+  e.style.background = 'linear-gradient(180deg, rgba(12,9,14,.88), rgba(7,6,8,.76))';
+  e.style.border = '1px solid rgba(246,212,123,.22)';
+  e.style.boxShadow = '0 12px 36px rgba(0,0,0,.35)';
+  e.style.pointerEvents = 'auto';
+  ui.appendChild(e);
+  return e;
+}
+const hud = panelBox('16px', '16px', 'min(920px,calc(100vw - 32px))');
+const quest = panelBox('16px', 'auto', 'min(360px,calc(100vw - 32px))'); quest.style.bottom = '20px';
+const card = panelBox('50%', 'auto', 'min(860px,94vw)'); card.style.bottom = '20px'; card.style.transform = 'translateX(-50%)'; card.style.display = 'none';
+const tip = panelBox('50%', 'auto', 'auto'); tip.style.bottom = '160px'; tip.style.transform = 'translateX(-50%)'; tip.style.display = 'none';
+const state = { day: 1, inf: 24, mil: 18, pub: 22, gold: 42, trust: 12, sus: 4, act: 1, visited: {} };
+function clamp(v) { return Math.max(0, Math.min(100, v)); }
+function score() { return state.inf + state.mil + state.pub + state.trust - Math.floor(state.sus * 1.4); }
+function hudUpdate() {
+  hud.textContent = 'Tahtın Gölgesi | Gün ' + state.day + ' | Nüfuz ' + state.inf + ' | Asker ' + state.mil + ' | Halk ' + state.pub + ' | Altın ' + state.gold + ' | Kral Güveni ' + state.trust + ' | Şüphe ' + state.sus + ' | Taht Puanı ' + score() + '/145';
+  quest.innerHTML = '<b>Görev Akışı</b><br>1) Mavi Hanedan’dan çıkıp Merkez Saray’a git.<br>2) Kral, Vezir ve Komutanla konuş.<br>3) Batı Selim, Doğu Orhan, Kuzey Cem sancaklarını ziyaret et.<br>4) Puan 145 olunca kralın final divanını başlat.';
+}
+function apply(e) {
+  for (const k in e) state[k] = clamp((state[k] || 0) + e[k]);
+  state.day++;
+  hudUpdate();
+}
+function makeBtn(t, fn) {
+  const b = document.createElement('button');
+  b.textContent = t;
+  b.style.margin = '5px'; b.style.padding = '10px 12px'; b.style.border = '0'; b.style.borderRadius = '10px';
+  b.style.background = '#d8953f'; b.style.color = '#201209'; b.style.fontWeight = '900'; b.style.cursor = 'pointer';
+  b.onclick = fn;
+  return b;
+}
+function showMessage(title, txt) {
+  card.style.display = 'block'; card.textContent = '';
+  const h = document.createElement('h2'); h.textContent = title; h.style.margin = '0 0 8px';
+  const p = document.createElement('p'); p.textContent = txt; p.style.lineHeight = '1.45';
+  card.append(h, p, makeBtn('Kapat', () => card.style.display = 'none'));
+}
+function intro() {
+  showMessage('Bölüm 1: Sancaklar Ayrıldı', 'Artık tek saray yok. Dünya haritası gerçek asset bölgelerine bölündü: güneyde Mavi Hanedan, merkezde kral sarayı, batıda Selim’in askerî sancağı, doğuda Orhan’ın talim ocağı, kuzeyde Cem’in gizli divanı. WASD ile yürü, mouse ile kamerayı çevir, E ile konuş.');
+}
+function final() {
+  let title = 'Eksik Destek', txt = 'Taht için yeterli güç topladın ama dengeler zayıf kaldı. Divan seni bekletmeye aldı.';
+  if (state.sus > 70) { title = 'Gölgen Ağır Bastı'; txt = 'Entrika ağın büyüdü. Saray seni durduramadı ama halk seni korkuyla andı.'; }
+  else if (state.trust >= 55 && state.pub >= 55) { title = 'Adaletle Gelen Taht'; txt = 'Kral ve halk seni meşru varis olarak kabul etti. Taht kılıçla değil rızayla alındı.'; }
+  else if (state.mil >= 65 && state.inf >= 45) { title = 'Sancakların Seçtiği Şehzade'; txt = 'Ordular ve sancak beyleri senin yanında birleşti. Divan askerin gölgesinde karar verdi.'; }
+  else if (state.inf >= 70) { title = 'Sarayın Sessiz Galibi'; txt = 'Mühürler, defterler ve gizli ittifaklar seni tahta taşıdı.'; }
+  card.style.display = 'block'; card.textContent = '';
+  const h = document.createElement('h1'); h.textContent = title;
+  const p = document.createElement('p'); p.textContent = txt;
+  card.append(h, p, makeBtn('Baştan Oyna', () => location.reload()));
+}
+const story = {
+  king: { t: 'Kral merkez divanda oturur. Gözleri yaşlıdır ama zihni hâlâ keskindir.', o: [['Devlet düzenini anlat', { trust: 9, inf: 5, gold: -4 }], ['Halkı koruyacağını söyle', { trust: 6, pub: 8, gold: -7 }], ['Taht iddiamı açıkla', { trust: -2, inf: 7, sus: 5 }]] },
+  vezir: { t: 'Vezir Nizam, mührün kılıçtan daha uzun yaşadığını fısıldar.', o: [['Defterleri kontrol et', { inf: 14, gold: -8, sus: 3 }], ['Sessiz bürokrasi kur', { inf: 8, sus: -2 }]] },
+  komutan: { t: 'Komutan Boran, sancakların kime döneceğini ordunun belirleyeceğini söyler.', o: [['Talim emri ver', { mil: 16, gold: -9 }], ['Disiplin vaadi ver', { mil: 8, trust: 5 }]] },
+  halk: { t: 'Elçi Derya, pazarın ve köylünün desteği olmadan tahtın boş kalacağını söyler.', o: [['Erzak dağıt', { pub: 17, gold: -12 }], ['Vergiyi hafifletme sözü ver', { pub: 10, trust: 3 }]] },
+  katip: { t: 'Sır Katibi Rafi, hangi sancakta kimin kime bağlı olduğunu bilir.', o: [['Gizli rapor iste', { inf: 12, sus: 8 }], ['Sadece dinle', { inf: 5, sus: -4 }]] },
+  selim: { t: 'Selim’in kırmızı sancağında kışla, kule ve savaş meydanı var. Gücü askerî disipline dayanır.', o: [['Geçici ittifak kur', { mil: 10, inf: 5, trust: -2 }], ['Onun komutanlarını yanına çek', { mil: 12, sus: 8 }], ['Açık rekabet ilan et', { inf: 7, sus: 4 }]] },
+  orhan: { t: 'Orhan’ın yeşil ocağı talim ve düzen üzerine kurulu. Asker sever ama saray entrikasından hoşlanmaz.', o: [['Talim ortaklığı kur', { mil: 13, gold: -7 }], ['Dürüst anlaşma yap', { trust: 6, mil: 5, sus: -3 }], ['Kampını gözlet', { inf: 8, sus: 7 }]] },
+  cem: { t: 'Cem’in mor divanı kuzeyde, yüksek kuleler ve gizli yollar arasında. Onun gücü bilgi ve sabırdır.', o: [['Bilgi takası yap', { inf: 15, sus: 6 }], ['Evlilik/akrabalık ittifakı öner', { trust: 6, inf: 5, gold: -6 }], ['Gizli ağını boz', { inf: 10, sus: 12 }]] }
+};
+function openNpc(n) {
+  const d = n.userData;
+  state.visited[d.id] = true;
+  card.style.display = 'block'; card.textContent = '';
+  const h = document.createElement('h2'); h.textContent = d.name + ' - ' + d.role;
+  const p = document.createElement('p'); p.style.lineHeight = '1.45';
+  card.append(h, p);
+  if (d.id === 'king' && score() >= 145) {
+    p.textContent = 'Divan hazır. Sancaklar sözünü söyledi. Taht iddianı açıklayabilirsin.';
+    card.append(makeBtn('Final Divanı Topla', () => { apply({ trust: 8, inf: 6 }); final(); }), makeBtn('Biraz daha hazırlan', () => card.style.display = 'none'));
+    return;
+  }
+  const s = story[d.id] || { t: 'Bu kişi saray dengesini etkiler.', o: [['Destek iste', { inf: 6, pub: 4 }]] };
+  p.textContent = s.t;
+  s.o.forEach(o => card.appendChild(makeBtn(o[0], () => { apply(o[1]); openNpc(n); })));
+  card.appendChild(makeBtn('Ayrıl', () => card.style.display = 'none'));
+}
+const keys = {}; let angle = Math.PI, mouse = false, near = null;
+addEventListener('keydown', e => { keys[e.code] = true; if (e.code === 'KeyE' && near) openNpc(near); if (e.code === 'KeyM') showMessage('Harita', 'Güney: Mavi Hanedan. Merkez: Kral Sarayı. Batı: Selim. Doğu: Orhan. Kuzey: Cem.'); });
+addEventListener('keyup', e => keys[e.code] = false);
+addEventListener('mousedown', () => mouse = true);
+addEventListener('mouseup', () => mouse = false);
+addEventListener('mousemove', e => { if (mouse) angle -= e.movementX * .006; });
+addEventListener('resize', () => { ctx.camera.aspect = innerWidth / innerHeight; ctx.camera.updateProjectionMatrix(); ctx.renderer.setSize(innerWidth, innerHeight); });
+function loop(t = 0) {
+  requestAnimationFrame(loop);
+  const v = new THREE.Vector3((keys.KeyD ? 1 : 0) - (keys.KeyA ? 1 : 0), 0, (keys.KeyS ? 1 : 0) - (keys.KeyW ? 1 : 0));
+  if (v.lengthSq()) {
+    v.normalize();
+    const f = new THREE.Vector3(Math.sin(angle), 0, Math.cos(angle));
+    const r = new THREE.Vector3(f.z, 0, -f.x);
+    const speed = keys.ShiftLeft || keys.ShiftRight ? 0.22 : 0.13;
+    const mv = r.multiplyScalar(v.x).add(f.multiplyScalar(v.z)).multiplyScalar(speed);
+    ctx.player.position.add(mv);
+    ctx.player.position.x = Math.max(-ctx.mapBounds.x, Math.min(ctx.mapBounds.x, ctx.player.position.x));
+    ctx.player.position.z = Math.max(ctx.mapBounds.zMin, Math.min(ctx.mapBounds.zMax, ctx.player.position.z));
+    ctx.player.rotation.y = Math.atan2(mv.x, mv.z);
+  }
+  let best = null, dist = 999;
+  for (const n of ctx.npcs) {
+    const d = n.position.distanceTo(ctx.player.position);
+    if (d < dist) { dist = d; best = n; }
+  }
+  near = dist < 5.2 ? best : null;
+  if (near) { tip.style.display = 'block'; tip.textContent = 'E - ' + near.userData.name + ' ile konuş'; } else tip.style.display = 'none';
+  const target = ctx.player.position.clone().add(new THREE.Vector3(0, 2.1, 0));
+  const off = new THREE.Vector3(Math.sin(angle) * 15, 10.2, Math.cos(angle) * 15);
+  ctx.camera.position.lerp(target.clone().add(off), .075);
+  ctx.camera.lookAt(target);
+  ctx.renderer.render(ctx.scene, ctx.camera);
+}
+ctx.camera.position.set(0, 16, 104);
+ctx.camera.lookAt(ctx.player.position);
+hudUpdate();
+intro();
+loop();
