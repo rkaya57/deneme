@@ -1,29 +1,52 @@
-Tahtin Golgesi - Secilen ve Donusturulen Assetler
+Tahtin Golgesi - Real Asset Pack V2
 
-ZIP dosyalarindan secilen modeller GLB formatina donusturuldu.
+Onceki secim zayif kaldigi icin asset sistemi genisletildi. Yeni sistem sadece 4 saray modeli degil, tam bir sancak haritasi kurar.
 
-Faction dosya eslesmeleri:
+Yeni ana assetler:
+- public/assets/buildings/town_center.glb
+- public/assets/buildings/barracks.glb
+- public/assets/buildings/temple.glb
+- public/assets/buildings/wonder.glb
+- public/assets/buildings/market.glb
+- public/assets/buildings/archery.glb
+- public/assets/buildings/watchtower.glb
+- public/assets/buildings/wall.glb
+- public/assets/buildings/gate.glb
+- public/assets/buildings/house_a.glb
+- public/assets/buildings/house_b.glb
+- public/assets/buildings/farm.glb
+- public/assets/buildings/storage.glb
+- public/assets/buildings/tower_house.glb
 
-player/palace.glb  <- Ultimate Fantasy RTS / TownCenter_SecondAge_Level3.gltf
-player/soldier.glb <- Ultimate Modular Men / Adventurer.gltf
+Doga ve prop assetleri:
+- public/assets/nature/tree_group.glb
+- public/assets/nature/pine_group.glb
+- public/assets/nature/rock_group.glb
+- public/assets/nature/gold.glb
+- public/assets/props/crate.glb
+- public/assets/props/barrel.glb
+- public/assets/props/crate_stack.glb
 
-selim/palace.glb   <- Ultimate Fantasy RTS / Barracks_SecondAge_Level3.gltf
-selim/soldier.glb  <- Ultimate Modular Men / Worker.gltf
+Karakter assetleri:
+- public/assets/characters/player_prince.glb
+- public/assets/characters/king.glb
+- public/assets/characters/selim_prince.glb
+- public/assets/characters/orhan_prince.glb
+- public/assets/characters/cem_prince.glb
+- public/assets/characters/halk_elcisi.glb
+- public/assets/characters/katip.glb
+- public/assets/characters/guard_knight.glb
 
-orhan/palace.glb   <- Ultimate Fantasy RTS / Temple_SecondAge_Level3.gltf
-orhan/soldier.glb  <- Ultimate Modular Men / Farmer.gltf
+Geriye donuk faction yolları da korunuyor:
+- public/assets/factions/player/palace.glb
+- public/assets/factions/player/soldier.glb
+- public/assets/factions/selim/palace.glb
+- public/assets/factions/selim/soldier.glb
+- public/assets/factions/orhan/palace.glb
+- public/assets/factions/orhan/soldier.glb
+- public/assets/factions/cem/palace.glb
+- public/assets/factions/cem/soldier.glb
 
-cem/palace.glb     <- Ultimate Fantasy RTS / Wonder_SecondAge_Level3.gltf
-cem/soldier.glb    <- Ultimate Modular Men / King.gltf
+Kod tarafinda simple.js artik bu assetleri acik dunya seklinde yerlestirir. simple3.js ise hikaye, gorev akisi, konusmalar, skor ve final divani sistemini yonetir.
 
-Oyunun bekledigi hedef klasorler:
-public/assets/factions/player/palace.glb
-public/assets/factions/player/soldier.glb
-public/assets/factions/selim/palace.glb
-public/assets/factions/selim/soldier.glb
-public/assets/factions/orhan/palace.glb
-public/assets/factions/orhan/soldier.glb
-public/assets/factions/cem/palace.glb
-public/assets/factions/cem/soldier.glb
-
-Not: GLB dosyalari binary oldugu icin bu sohbet/GitHub connector uzerinden dogrudan yazilamadi. Dosyalar dogru klasor yapisiyla hazirlandi; zip repo kokune acildiginda oyun gercek assetleri okuyacak.
+Not: Binary GLB dosyalari GitHub connector ile dogrudan yazilamadigi icin asset paketi zip olarak hazirlandi. Zip repo kokune acilinca oyun dogrudan gercek assetleri okuyacak.
